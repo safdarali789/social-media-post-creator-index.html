@@ -1,0 +1,1056 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pro Creator - Complete Social Media Designer</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { 
+            font-family: 'Inter', 'Segoe UI', sans-serif; 
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%); 
+            min-height: 100vh; 
+            color: #e2e8f0; 
+        }
+        .header { 
+            background: rgba(15, 23, 42, 0.95); 
+            backdrop-filter: blur(10px);
+            padding: 16px 24px; 
+            border-bottom: 1px solid rgba(148, 163, 184, 0.1); 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            position: sticky; 
+            top: 0; 
+            z-index: 200;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+        }
+        .logo { 
+            font-size: 22px; 
+            font-weight: 800; 
+            background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%); 
+            -webkit-background-clip: text; 
+            -webkit-text-fill-color: transparent; 
+            background-clip: text;
+            letter-spacing: -1px;
+        }
+        .header-info {
+            display: flex;
+            gap: 16px;
+            align-items: center;
+            font-size: 12px;
+            color: #94a3b8;
+        }
+        .export-btn { 
+            background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%); 
+            color: white; 
+            padding: 10px 24px; 
+            border: none; 
+            border-radius: 8px; 
+            cursor: pointer; 
+            font-weight: 600;
+            font-size: 13px;
+            transition: all 0.3s;
+        }
+        .export-btn:hover { 
+            transform: translateY(-2px); 
+            box-shadow: 0 12px 32px rgba(59, 130, 246, 0.4); 
+        }
+        .main { 
+            display: grid; 
+            grid-template-columns: 280px 1fr 300px; 
+            gap: 0; 
+            height: calc(100vh - 64px); 
+        }
+        @media (max-width: 1200px) { 
+            .main { 
+                grid-template-columns: 250px 1fr; 
+            } 
+            .right-sidebar { display: none; } 
+        }
+        @media (max-width: 768px) { 
+            .main { 
+                grid-template-columns: 1fr; 
+            } 
+            .left-sidebar { display: none; } 
+        }
+        .panel { 
+            background: rgba(30, 41, 59, 0.6); 
+            backdrop-filter: blur(10px);
+            border-right: 1px solid rgba(148, 163, 184, 0.1); 
+            overflow-y: auto; 
+            padding: 16px; 
+        }
+        .right-sidebar { 
+            border-left: 1px solid rgba(148, 163, 184, 0.1); 
+        }
+        .canvas-wrapper { 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            background: linear-gradient(45deg, rgba(15, 23, 42, 0.8) 0%, rgba(30, 41, 59, 0.6) 100%); 
+            overflow: auto; 
+            position: relative;
+            padding: 20px;
+        }
+        canvas { 
+            cursor: crosshair;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6); 
+            border-radius: 12px;
+            background: white;
+        }
+        .section-title { 
+            font-size: 11px; 
+            font-weight: 800; 
+            text-transform: uppercase; 
+            letter-spacing: 1.5px; 
+            color: #94a3b8; 
+            margin: 16px 0 10px; 
+            padding-bottom: 8px; 
+            border-bottom: 2px solid rgba(59, 130, 246, 0.2);
+        }
+        .section-title:first-child { margin-top: 0; }
+        .grid-2 { 
+            display: grid; 
+            grid-template-columns: 1fr 1fr; 
+            gap: 8px; 
+            margin-bottom: 12px; 
+        }
+        .grid-3 { 
+            display: grid; 
+            grid-template-columns: repeat(3, 1fr); 
+            gap: 6px; 
+            margin-bottom: 12px; 
+        }
+        .btn { 
+            padding: 8px 10px; 
+            background: rgba(148, 163, 184, 0.08); 
+            border: 1px solid rgba(148, 163, 184, 0.25); 
+            color: #cbd5e1; 
+            border-radius: 6px; 
+            cursor: pointer; 
+            font-size: 10px; 
+            font-weight: 600; 
+            text-align: center; 
+            transition: all 0.3s;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .btn:hover { 
+            background: rgba(59, 130, 246, 0.15); 
+            border-color: #3b82f6; 
+            color: #3b82f6;
+        }
+        .btn.active { 
+            background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%); 
+            border-color: transparent; 
+            color: white;
+        }
+        .btn-large {
+            padding: 12px;
+            font-size: 11px;
+            width: 100%;
+            margin-bottom: 8px;
+        }
+        .control-group { 
+            margin-bottom: 12px; 
+        }
+        .label { 
+            display: block; 
+            font-size: 11px; 
+            font-weight: 700; 
+            color: #cbd5e1; 
+            margin-bottom: 5px; 
+            text-transform: uppercase; 
+            letter-spacing: 0.5px;
+        }
+        input, textarea, select { 
+            width: 100%; 
+            padding: 8px 10px; 
+            background: rgba(148, 163, 184, 0.08); 
+            border: 1px solid rgba(148, 163, 184, 0.25); 
+            border-radius: 6px; 
+            color: #e2e8f0; 
+            font-size: 11px; 
+            font-family: inherit; 
+            transition: all 0.3s;
+        }
+        input:focus, textarea:focus, select:focus { 
+            background: rgba(59, 130, 246, 0.15); 
+            border-color: #3b82f6; 
+            outline: none;
+            box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.1);
+        }
+        textarea { 
+            resize: vertical; 
+            min-height: 55px; 
+            font-family: 'Courier New', monospace;
+        }
+        input[type="color"] { 
+            cursor: pointer; 
+            padding: 4px; 
+            height: 36px;
+        }
+        input[type="file"] {
+            padding: 6px;
+        }
+        .slider-group { 
+            display: grid; 
+            grid-template-columns: 1fr 45px; 
+            gap: 10px; 
+            align-items: center; 
+        }
+        input[type="range"] { 
+            width: 100%; 
+            height: 5px; 
+            background: rgba(148, 163, 184, 0.2); 
+            border-radius: 3px; 
+            outline: none; 
+            -webkit-appearance: none;
+            cursor: pointer;
+        }
+        input[type="range"]::-webkit-slider-thumb { 
+            -webkit-appearance: none; 
+            width: 16px; 
+            height: 16px; 
+            border-radius: 50%; 
+            background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%); 
+            cursor: pointer;
+            box-shadow: 0 2px 8px rgba(59, 130, 246, 0.4);
+        }
+        input[type="range"]::-moz-range-thumb { 
+            width: 16px; 
+            height: 16px; 
+            border-radius: 50%; 
+            background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%); 
+            cursor: pointer;
+            border: none;
+        }
+        .value-display { 
+            font-size: 10px; 
+            color: #94a3b8; 
+            font-weight: 700; 
+            text-align: right;
+        }
+        .tabs { 
+            display: flex; 
+            gap: 0; 
+            border-bottom: 1px solid rgba(148, 163, 184, 0.15); 
+            margin-bottom: 12px;
+        }
+        .tab { 
+            flex: 1; 
+            padding: 10px 0; 
+            border: none; 
+            background: none; 
+            color: #94a3b8; 
+            cursor: pointer; 
+            font-weight: 600; 
+            font-size: 10px; 
+            border-bottom: 2px solid transparent; 
+            transition: all 0.3s;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .tab:hover { color: #cbd5e1; }
+        .tab.active { 
+            color: #3b82f6; 
+            border-bottom-color: #3b82f6;
+        }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+        .color-palette {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 6px;
+            margin-bottom: 12px;
+        }
+        .color-box {
+            aspect-ratio: 1;
+            border-radius: 6px;
+            cursor: pointer;
+            border: 2px solid transparent;
+            transition: all 0.2s;
+        }
+        .color-box:hover {
+            transform: scale(1.05);
+        }
+        .color-box.active {
+            border-color: white;
+            box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.5);
+        }
+        .shape-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 6px;
+            margin-bottom: 12px;
+        }
+        .shape-btn {
+            aspect-ratio: 1;
+            border: 1px solid rgba(148, 163, 184, 0.25);
+            background: rgba(148, 163, 184, 0.08);
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 20px;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .shape-btn:hover {
+            background: rgba(59, 130, 246, 0.15);
+            border-color: #3b82f6;
+            transform: translateY(-2px);
+        }
+        .template-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 8px;
+            max-height: 180px;
+            overflow-y: auto;
+            margin-bottom: 12px;
+        }
+        .template-card {
+            aspect-ratio: 1;
+            border-radius: 6px;
+            border: 2px solid rgba(148, 163, 184, 0.25);
+            cursor: pointer;
+            background-size: cover;
+            font-size: 10px;
+            font-weight: 600;
+            color: white;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s;
+        }
+        .template-card:hover {
+            transform: translateY(-3px);
+            border-color: rgba(59, 130, 246, 0.5);
+        }
+        .template-card.active {
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.3);
+        }
+        .layer-item {
+            padding: 10px;
+            background: rgba(59, 130, 246, 0.05);
+            border: 1px solid rgba(148, 163, 184, 0.1);
+            border-radius: 6px;
+            margin-bottom: 6px;
+            cursor: pointer;
+            font-size: 11px;
+            color: #cbd5e1;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: all 0.2s;
+        }
+        .layer-item:hover {
+            background: rgba(59, 130, 246, 0.15);
+            border-color: #3b82f6;
+        }
+        .layer-item.active {
+            background: rgba(59, 130, 246, 0.25);
+            color: #3b82f6;
+            font-weight: 600;
+        }
+        .layer-actions {
+            display: flex;
+            gap: 4px;
+            font-size: 9px;
+        }
+        .layer-btn {
+            padding: 3px 6px;
+            background: rgba(59, 130, 246, 0.3);
+            border: none;
+            border-radius: 3px;
+            color: #3b82f6;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .layer-btn:hover {
+            background: rgba(59, 130, 246, 0.5);
+        }
+        .status-bar {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: 600;
+            box-shadow: 0 8px 32px rgba(59, 130, 246, 0.3);
+            z-index: 1000;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+        .status-bar.show { opacity: 1; pointer-events: auto; }
+        .button-group {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+            margin-top: 16px;
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
+            color: white;
+            padding: 10px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 11px;
+            text-transform: uppercase;
+            transition: all 0.3s;
+        }
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(59, 130, 246, 0.4);
+        }
+        .btn-secondary {
+            background: rgba(148, 163, 184, 0.1);
+            color: #cbd5e1;
+            padding: 10px;
+            border: 1px solid rgba(148, 163, 184, 0.25);
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 11px;
+            text-transform: uppercase;
+            transition: all 0.3s;
+        }
+        .btn-secondary:hover {
+            background: rgba(148, 163, 184, 0.15);
+            border-color: rgba(148, 163, 184, 0.4);
+        }
+        .btn-danger {
+            background: rgba(239, 68, 68, 0.15);
+            color: #fca5a5;
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            padding: 4px 8px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 9px;
+            transition: all 0.2s;
+        }
+        .btn-danger:hover {
+            background: rgba(239, 68, 68, 0.25);
+            border-color: rgba(239, 68, 68, 0.5);
+        }
+        .info-panel {
+            background: rgba(59, 130, 246, 0.1);
+            border: 1px solid rgba(59, 130, 246, 0.2);
+            border-radius: 6px;
+            padding: 12px;
+            font-size: 10px;
+            color: #93c5fd;
+            line-height: 1.8;
+            margin-top: 16px;
+        }
+        .info-panel strong {
+            color: #3b82f6;
+        }
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: rgba(148, 163, 184, 0.05);
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: rgba(59, 130, 246, 0.4);
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(59, 130, 246, 0.6);
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <div class="header">
+        <div class="logo">✨ Pro Creator Studio</div>
+        <div class="header-info">
+            <span id="platformLabel">Instagram • 1080×1080</span>
+            <span id="elementCount">0 Elements</span>
+        </div>
+        <button class="export-btn" onclick="exportDesign()">⬇️ Export PNG</button>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main">
+        <!-- LEFT SIDEBAR -->
+        <div class="panel left-sidebar">
+            <div class="tabs">
+                <button class="tab active" onclick="switchTab(event, 'templates')">Templates</button>
+                <button class="tab" onclick="switchTab(event, 'elements')">Elements</button>
+                <button class="tab" onclick="switchTab(event, 'layers')">Layers</button>
+            </div>
+
+            <!-- TEMPLATES TAB -->
+            <div id="templates" class="tab-content active">
+                <div class="section-title">Platform</div>
+                <div class="grid-2">
+                    <button class="btn active" onclick="setPlatform(1080, 1080, 'Instagram Post')">📸 Instagram</button>
+                    <button class="btn" onclick="setPlatform(1080, 1350, 'Instagram Story')">📱 Story</button>
+                    <button class="btn" onclick="setPlatform(1200, 628, 'Facebook Cover')">👍 Facebook</button>
+                    <button class="btn" onclick="setPlatform(1024, 512, 'Twitter')">𝕏 Twitter</button>
+                    <button class="btn" onclick="setPlatform(1200, 1500, 'Pinterest')">📌 Pinterest</button>
+                    <button class="btn" onclick="setPlatform(1280, 720, 'YouTube')">▶️ YouTube</button>
+                    <button class="btn" onclick="setPlatform(1080, 1920, 'TikTok')">🎵 TikTok</button>
+                    <button class="btn" onclick="setPlatform(800, 600, 'Custom')">⚙️ Custom</button>
+                </div>
+
+                <div class="section-title">Color Templates</div>
+                <div class="template-grid" id="templateGrid"></div>
+
+                <div class="section-title">Background</div>
+                <div class="control-group">
+                    <label class="label">Background Color</label>
+                    <input type="color" id="bgColor" value="#ffffff" onchange="updateCanvas()">
+                </div>
+                <div class="control-group">
+                    <label class="label">Background Image</label>
+                    <input type="file" id="bgImage" accept="image/*" onchange="loadBackgroundImage()">
+                </div>
+                <div class="control-group">
+                    <label class="label">Image Opacity</label>
+                    <div class="slider-group">
+                        <input type="range" id="bgOpacity" min="0" max="1" step="0.1" value="1" onchange="updateCanvas()">
+                        <div class="value-display" id="bgOpacityVal">100%</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ELEMENTS TAB -->
+            <div id="elements" class="tab-content">
+                <button class="btn btn-large" onclick="addTextBox()">+ Add Text Box</button>
+
+                <div class="section-title">Text Box (Selected)</div>
+                <div id="textControls" style="display: none;">
+                    <div class="control-group">
+                        <label class="label">Content</label>
+                        <textarea id="textContent" onchange="updateSelectedElement()" oninput="updateSelectedElement()">Your text here</textarea>
+                    </div>
+                    <div class="control-group">
+                        <label class="label">Font Size</label>
+                        <div class="slider-group">
+                            <input type="range" id="textSize" min="10" max="120" value="32" onchange="updateSelectedElement()">
+                            <div class="value-display" id="textSizeVal">32px</div>
+                        </div>
+                    </div>
+                    <div class="control-group">
+                        <label class="label">Font</label>
+                        <select id="textFont" onchange="updateSelectedElement()">
+                            <option value="Arial">Arial</option>
+                            <option value="Georgia">Georgia</option>
+                            <option value="Impact" selected>Impact</option>
+                            <option value="Courier">Courier</option>
+                            <option value="Verdana">Verdana</option>
+                        </select>
+                    </div>
+                    <div class="control-group">
+                        <label class="label">Text Color</label>
+                        <input type="color" id="textColor" value="#000000" onchange="updateSelectedElement()">
+                    </div>
+                    <div class="control-group">
+                        <label class="label">Text Shadow</label>
+                        <input type="checkbox" id="textShadow" onchange="updateSelectedElement()"> 
+                        <span style="font-size: 10px; color: #94a3b8;">Add Shadow</span>
+                    </div>
+                    <div class="control-group">
+                        <label class="label">Alignment</label>
+                        <div class="grid-3">
+                            <button class="btn" onclick="alignText('left')">Left</button>
+                            <button class="btn" onclick="alignText('center')">Center</button>
+                            <button class="btn" onclick="alignText('right')">Right</button>
+                        </div>
+                    </div>
+                    <div class="control-group">
+                        <label class="label">Actions</label>
+                        <div class="grid-2">
+                            <button class="btn" onclick="cloneElement()">Clone</button>
+                            <button class="btn btn-danger" onclick="deleteElement()">Delete</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="section-title">Shapes</div>
+                <div class="shape-grid">
+                    <button class="shape-btn" onclick="addShape('rect')">⬜</button>
+                    <button class="shape-btn" onclick="addShape('circle')">⭕</button>
+                    <button class="shape-btn" onclick="addShape('triangle')">🔺</button>
+                    <button class="shape-btn" onclick="addShape('line')">━</button>
+                </div>
+
+                <div class="control-group">
+                    <label class="label">Shape Color</label>
+                    <input type="color" id="shapeColor" value="#3b82f6" onchange="updateCanvas()">
+                </div>
+            </div>
+
+            <!-- LAYERS TAB -->
+            <div id="layers" class="tab-content">
+                <div class="section-title">All Elements</div>
+                <div id="layersList" style="max-height: 400px; overflow-y: auto;"></div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="button-group">
+                <button class="btn-primary" onclick="exportDesign()">⬇️ Export</button>
+                <button class="btn-secondary" onclick="location.reload()">↺ Reset</button>
+            </div>
+        </div>
+
+        <!-- CENTER CANVAS -->
+        <div class="canvas-wrapper">
+            <canvas id="canvas" width="1080" height="1080"></canvas>
+        </div>
+
+        <!-- RIGHT SIDEBAR -->
+        <div class="panel right-sidebar">
+            <div class="section-title">Filters</div>
+            <div class="grid-3">
+                <button class="btn" onclick="applyFilter('bright', 120)">Bright</button>
+                <button class="btn" onclick="applyFilter('contrast', 130)">Contrast</button>
+                <button class="btn" onclick="applyFilter('sepia', 100)">Sepia</button>
+            </div>
+
+            <div class="control-group">
+                <label class="label">Brightness</label>
+                <div class="slider-group">
+                    <input type="range" id="brightness" min="50" max="200" value="100" onchange="updateCanvas()">
+                    <div class="value-display" id="brightnessVal">100%</div>
+                </div>
+            </div>
+
+            <div class="control-group">
+                <label class="label">Contrast</label>
+                <div class="slider-group">
+                    <input type="range" id="contrast" min="50" max="200" value="100" onchange="updateCanvas()">
+                    <div class="value-display" id="contrastVal">100%</div>
+                </div>
+            </div>
+
+            <div class="control-group">
+                <label class="label">Saturation</label>
+                <div class="slider-group">
+                    <input type="range" id="saturation" min="0" max="200" value="100" onchange="updateCanvas()">
+                    <div class="value-display" id="saturationVal">100%</div>
+                </div>
+            </div>
+
+            <div class="control-group">
+                <label class="label">Blur</label>
+                <div class="slider-group">
+                    <input type="range" id="blur" min="0" max="20" value="0" onchange="updateCanvas()">
+                    <div class="value-display" id="blurVal">0px</div>
+                </div>
+            </div>
+
+            <div class="info-panel">
+                <p><strong>💡 Tips:</strong></p>
+                <p style="margin-top: 6px;">• Click + Add Text to create boxes</p>
+                <p>• Click text on canvas to edit</p>
+                <p>• Drag text to reposition</p>
+                <p>• Add shapes for decoration</p>
+                <p>• Use filters to enhance</p>
+                <p style="margin-top: 6px;"><strong>Platform:</strong><br><span id="platformInfo">Instagram • 1080×1080</span></p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Status Bar -->
+    <div class="status-bar" id="statusBar">Action completed ✨</div>
+
+    <script>
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+        let textBoxes = [];
+        let shapes = [];
+        let selectedId = null;
+        let backgroundImage = null;
+        let isDragging = false;
+        let dragOffsetX = 0;
+        let dragOffsetY = 0;
+
+        // Templates
+        const templates = [
+            {name: 'Blue', g1: '#1e88e5', g2: '#42a5f5'},
+            {name: 'Purple', g1: '#7e57c2', g2: '#ab47bc'},
+            {name: 'Pink', g1: '#ec407a', g2: '#f06292'},
+            {name: 'Cyan', g1: '#00acc1', g2: '#26c6da'},
+            {name: 'Green', g1: '#43a047', g2: '#66bb6a'},
+            {name: 'Orange', g1: '#fb8c00', g2: '#ffa726'},
+            {name: 'Red', g1: '#e53935', g2: '#ef5350'},
+            {name: 'Teal', g1: '#00796b', g2: '#009688'},
+            {name: 'Indigo', g1: '#3949ab', g2: '#5c6bc0'},
+            {name: 'Amber', g1: '#f57f17', g2: '#fbc02d'}
+        ];
+
+        class TextBox {
+            constructor() {
+                this.id = Date.now();
+                this.text = 'Click to edit';
+                this.x = canvas.width / 2;
+                this.y = canvas.height / 2;
+                this.fontSize = 32;
+                this.color = '#000000';
+                this.font = 'Arial';
+                this.alignment = 'center';
+                this.width = 400;
+                this.height = 80;
+                this.shadow = false;
+                this.type = 'text';
+            }
+        }
+
+        class Shape {
+            constructor(type) {
+                this.id = Date.now() + Math.random();
+                this.type = type;
+                this.x = canvas.width / 2;
+                this.y = canvas.height / 2;
+                this.width = 100;
+                this.height = 100;
+                this.color = document.getElementById('shapeColor').value;
+                this.opacity = 0.8;
+            }
+        }
+
+        // Initialize Templates
+        function initTemplates() {
+            const grid = document.getElementById('templateGrid');
+            grid.innerHTML = '';
+            templates.forEach((t, i) => {
+                const card = document.createElement('div');
+                card.className = `template-card ${i === 0 ? 'active' : ''}`;
+                card.style.background = `linear-gradient(135deg, ${t.g1}, ${t.g2})`;
+                card.textContent = t.name;
+                card.onclick = () => applyTemplate(t, card);
+                grid.appendChild(card);
+            });
+        }
+
+        function applyTemplate(template, card) {
+            document.getElementById('bgColor').value = template.g1;
+            document.querySelectorAll('.template-card').forEach(c => c.classList.remove('active'));
+            card.classList.add('active');
+            updateCanvas();
+        }
+
+        // Text Box Functions
+        function addTextBox() {
+            const box = new TextBox();
+            textBoxes.push(box);
+            selectedId = box.id;
+            updateCanvas();
+            updateLayersList();
+            showStatus('Text box added');
+        }
+
+        function selectTextBox(id) {
+            selectedId = id;
+            const box = textBoxes.find(b => b.id === id);
+            if (box) {
+                document.getElementById('textContent').value = box.text;
+                document.getElementById('textSize').value = box.fontSize;
+                document.getElementById('textSizeVal').textContent = box.fontSize + 'px';
+                document.getElementById('textColor').value = box.color;
+                document.getElementById('textFont').value = box.font;
+                document.getElementById('textShadow').checked = box.shadow;
+                document.getElementById('textControls').style.display = 'block';
+            }
+            updateLayersList();
+            updateCanvas();
+        }
+
+        function updateSelectedElement() {
+            const box = textBoxes.find(b => b.id === selectedId);
+            if (!box) return;
+            box.text = document.getElementById('textContent').value;
+            box.fontSize = parseInt(document.getElementById('textSize').value);
+            box.color = document.getElementById('textColor').value;
+            box.font = document.getElementById('textFont').value;
+            box.shadow = document.getElementById('textShadow').checked;
+            updateCanvas();
+        }
+
+        function alignText(align) {
+            const box = textBoxes.find(b => b.id === selectedId);
+            if (box) {
+                box.alignment = align;
+                updateCanvas();
+            }
+        }
+
+        function cloneElement() {
+            const box = textBoxes.find(b => b.id === selectedId);
+            if (box) {
+                const clone = JSON.parse(JSON.stringify(box));
+                clone.id = Date.now();
+                clone.x += 30;
+                clone.y += 30;
+                textBoxes.push(clone);
+                selectedId = clone.id;
+                updateCanvas();
+                updateLayersList();
+                showStatus('Text box cloned');
+            }
+        }
+
+        function deleteElement() {
+            textBoxes = textBoxes.filter(b => b.id !== selectedId);
+            selectedId = null;
+            document.getElementById('textControls').style.display = 'none';
+            updateCanvas();
+            updateLayersList();
+            showStatus('Element deleted');
+        }
+
+        // Shape Functions
+        function addShape(type) {
+            const shape = new Shape(type);
+            shapes.push(shape);
+            updateCanvas();
+            updateLayersList();
+            showStatus(`${type} shape added`);
+        }
+
+        // Platform Functions
+        function setPlatform(w, h, name) {
+            canvas.width = w;
+            canvas.height = h;
+            document.getElementById('platformLabel').textContent = name + ' • ' + w + '×' + h;
+            document.getElementById('platformInfo').textContent = name + ' • ' + w + '×' + h;
+            updateCanvas();
+        }
+
+        // Canvas Drawing
+        function updateCanvas() {
+            const bgColor = document.getElementById('bgColor').value;
+            const bgOp = parseFloat(document.getElementById('bgOpacity').value);
+            const br = document.getElementById('brightness').value;
+            const co = document.getElementById('contrast').value;
+            const sa = document.getElementById('saturation').value;
+            const bl = document.getElementById('blur').value;
+
+            ctx.fillStyle = bgColor;
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            if (backgroundImage) {
+                ctx.globalAlpha = bgOp;
+                ctx.drawImage(backgroundImage, 0, 0, canvas.width, canvas.height);
+                ctx.globalAlpha = 1;
+            }
+
+            ctx.filter = `brightness(${br}%) contrast(${co}%) saturate(${sa}%) blur(${bl}px)`;
+
+            // Draw shapes
+            shapes.forEach(shape => {
+                ctx.globalAlpha = shape.opacity;
+                ctx.fillStyle = shape.color;
+                ctx.strokeStyle = shape.color;
+
+                if (shape.type === 'rect') {
+                    ctx.fillRect(shape.x - shape.width/2, shape.y - shape.height/2, shape.width, shape.height);
+                } else if (shape.type === 'circle') {
+                    ctx.beginPath();
+                    ctx.arc(shape.x, shape.y, shape.width/2, 0, Math.PI * 2);
+                    ctx.fill();
+                } else if (shape.type === 'triangle') {
+                    ctx.beginPath();
+                    ctx.moveTo(shape.x, shape.y - shape.height/2);
+                    ctx.lineTo(shape.x + shape.width/2, shape.y + shape.height/2);
+                    ctx.lineTo(shape.x - shape.width/2, shape.y + shape.height/2);
+                    ctx.closePath();
+                    ctx.fill();
+                } else if (shape.type === 'line') {
+                    ctx.lineWidth = 4;
+                    ctx.beginPath();
+                    ctx.moveTo(shape.x - shape.width/2, shape.y);
+                    ctx.lineTo(shape.x + shape.width/2, shape.y);
+                    ctx.stroke();
+                }
+                ctx.globalAlpha = 1;
+            });
+
+            // Draw text boxes
+            textBoxes.forEach(box => {
+                ctx.font = `${box.fontSize}px ${box.font}`;
+                ctx.fillStyle = box.color;
+                ctx.textAlign = box.alignment;
+                ctx.textBaseline = 'middle';
+
+                if (box.shadow) {
+                    ctx.shadowColor = 'rgba(0, 0, 0, 0.5)';
+                    ctx.shadowBlur = 10;
+                    ctx.shadowOffsetX = 2;
+                    ctx.shadowOffsetY = 2;
+                }
+
+                // Selection box
+                if (box.id === selectedId) {
+                    ctx.strokeStyle = '#3b82f6';
+                    ctx.lineWidth = 3;
+                    ctx.strokeRect(box.x - box.width/2, box.y - box.height/2, box.width, box.height);
+                }
+
+                ctx.fillText(box.text, box.x, box.y);
+                ctx.shadowColor = 'transparent';
+            });
+
+            ctx.filter = 'none';
+            updateElementCount();
+        }
+
+        // Background Image
+        function loadBackgroundImage() {
+            const file = document.getElementById('bgImage').files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    const img = new Image();
+                    img.onload = () => {
+                        backgroundImage = img;
+                        updateCanvas();
+                        showStatus('Background image loaded');
+                    };
+                    img.src = e.target.result;
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        // Filters
+        function applyFilter(type, value) {
+            if (type === 'bright') document.getElementById('brightness').value = value;
+            else if (type === 'contrast') document.getElementById('contrast').value = value;
+            else if (type === 'sepia') {
+                document.getElementById('brightness').value = 110;
+                document.getElementById('saturation').value = 80;
+            }
+            updateValues();
+            updateCanvas();
+        }
+
+        // Update Value Displays
+        function updateValues() {
+            document.getElementById('brightnessVal').textContent = document.getElementById('brightness').value + '%';
+            document.getElementById('contrastVal').textContent = document.getElementById('contrast').value + '%';
+            document.getElementById('saturationVal').textContent = document.getElementById('saturation').value + '%';
+            document.getElementById('blurVal').textContent = document.getElementById('blur').value + 'px';
+            document.getElementById('bgOpacityVal').textContent = Math.round(document.getElementById('bgOpacity').value * 100) + '%';
+        }
+
+        // Layers List
+        function updateLayersList() {
+            const list = document.getElementById('layersList');
+            list.innerHTML = '';
+
+            [...textBoxes, ...shapes].forEach(item => {
+                const div = document.createElement('div');
+                div.className = `layer-item ${item.id === selectedId ? 'active' : ''}`;
+                const icon = item.text ? '📝' : '🔷';
+                const name = item.text ? `Text: "${item.text.substring(0, 12)}"` : `Shape: ${item.type}`;
+                div.innerHTML = `<span>${icon} ${name}</span>`;
+                div.onclick = () => {
+                    if (item.text !== undefined) selectTextBox(item.id);
+                    updateLayersList();
+                    updateCanvas();
+                };
+                list.appendChild(div);
+            });
+        }
+
+        // Export
+        function exportDesign() {
+            const link = document.createElement('a');
+            link.href = canvas.toDataURL('image/png');
+            link.download = `design-${Date.now()}.png`;
+            link.click();
+            showStatus('Design exported ✅');
+        }
+
+        // Utilities
+        function switchTab(e, tab) {
+            document.querySelectorAll('.tab-content').forEach(x => x.classList.remove('active'));
+            document.querySelectorAll('.tab').forEach(x => x.classList.remove('active'));
+            document.getElementById(tab).classList.add('active');
+            e.target.classList.add('active');
+        }
+
+        function updateElementCount() {
+            const count = textBoxes.length + shapes.length;
+            document.getElementById('elementCount').textContent = count + ' Elements';
+        }
+
+        function showStatus(msg) {
+            const bar = document.getElementById('statusBar');
+            bar.textContent = msg;
+            bar.classList.add('show');
+            setTimeout(() => bar.classList.remove('show'), 2000);
+        }
+
+        // Canvas Events
+        canvas.addEventListener('mousedown', (e) => {
+            const rect = canvas.getBoundingClientRect();
+            const x = (e.clientX - rect.left) * (canvas.width / rect.width);
+            const y = (e.clientY - rect.top) * (canvas.height / rect.height);
+
+            textBoxes.forEach(box => {
+                if (x > box.x - box.width/2 && x < box.x + box.width/2 &&
+                    y > box.y - box.height/2 && y < box.y + box.height/2) {
+                    selectTextBox(box.id);
+                    isDragging = true;
+                    dragOffsetX = x - box.x;
+                    dragOffsetY = y - box.y;
+                }
+            });
+        });
+
+        canvas.addEventListener('mousemove', (e) => {
+            if (isDragging && selectedId) {
+                const rect = canvas.getBoundingClientRect();
+                const x = (e.clientX - rect.left) * (canvas.width / rect.width);
+                const y = (e.clientY - rect.top) * (canvas.height / rect.height);
+
+                const box = textBoxes.find(b => b.id === selectedId);
+                if (box) {
+                    box.x = Math.max(box.width/2, Math.min(canvas.width - box.width/2, x - dragOffsetX));
+                    box.y = Math.max(box.height/2, Math.min(canvas.height - box.height/2, y - dragOffsetY));
+                    updateCanvas();
+                }
+            }
+        });
+
+        canvas.addEventListener('mouseup', () => {
+            isDragging = false;
+        });
+
+        // Event Listeners
+        document.getElementById('textSize').addEventListener('input', (e) => {
+            document.getElementById('textSizeVal').textContent = e.target.value + 'px';
+        });
+
+        document.getElementById('brightness').addEventListener('input', updateValues);
+        document.getElementById('contrast').addEventListener('input', updateValues);
+        document.getElementById('saturation').addEventListener('input', updateValues);
+        document.getElementById('blur').addEventListener('input', updateValues);
+        document.getElementById('bgOpacity').addEventListener('input', updateValues);
+
+        // Initialize
+        initTemplates();
+        addTextBox();
+        updateCanvas();
+        updateLayersList();
+    </script>
+</body>
+</html>
